@@ -1,0 +1,103 @@
+// ===========================================================================
+//											FAVOR MANTER OS CREDITOS
+// Nome do Script:  	Alchemy e Tinkering
+// Criado por:         	Rafael Unnamed
+// ================================================== 
+// Versão:		1.2 Version
+// Atualizada:		11/02/2022
+// Teste:           	1 Players 
+// Aprovado:          	100% 
+// Testado no:        	Ancorp Shard
+// ================================================== 
+// Recomendo 1 bau seguro no banco ou travado em uma small 
+// com nightside e ceramic para criar pots vazios e porções do poison
+// ===========================================================================
+
+function TinkerAlchemy() {
+	var bau = '0x40310D53'
+	var reg = '0x0F88'
+	var igot = '0x1BF2'
+	var pot = '0x1F5F'
+	var ferramenta_tinker = '0x401160E2'
+	var ferramenta_alchmey = '0x40115D76'
+	tinkering = Orion.SkillValue('Tinkering', 'real')
+	alchmey = Orion.SkillValue('Alchemy', 'real')
+	Orion.UseObject(bau)
+	while (tinkering < 1000 || alchmey < 100) {
+		// Pegar Igot
+		pi = Orion.Count(igot, 'any', 'backpack')
+		pv = Orion.Count('0x0F0E', '0x0000', 'backpack')
+		while (pv == 0) {
+			//Pega igot para fazer pot
+			while (pi < 2) {
+				r = Orion.FindType(igot, 'any', bau)
+				Orion.MoveItem(r, 2, backpack)
+				Orion.Wait(300)
+				pi = Orion.Count(igot, 'any', 'backpack')
+			}
+			//Fazer Pot
+			Orion.Wait(250)
+			Orion.UseObject(ferramenta_tinker);
+			Orion.Wait(250)
+			gump = Orion.GetGump('lastgump');
+			if ((gump !== null) && (!gump.Replayed())) {
+				gump.Select(Orion.CreateGumpHook(7));
+				while (!Orion.WaitForGump(100)) {
+					Orion.Wait(100)
+				}
+				gump = Orion.GetGump('lastgump');
+				gump.Select(Orion.CreateGumpHook(10107));
+			}
+			while (!Orion.WaitForGump(100)) {
+				Orion.Wait(100)
+			}
+			gump = Orion.GetGump('lastgump');
+			gump.Close()
+			Orion.Wait(100)
+			pv = Orion.Count('0x0F0E', '0x0000', 'backpack')
+			pi = Orion.Count(igot, 'any', 'backpack')
+		}
+		pr = Orion.Count(reg, 'any', 'backpack')
+
+		while (pr == 0) {
+			r = Orion.FindType(reg, 'any', bau)
+			Orion.MoveItem(r, 1, backpack)
+			Orion.Wait(300)
+			pr = Orion.Count(reg, 'any', 'backpack')
+		}
+		Orion.Wait(250)
+		Orion.UseObject(ferramenta_alchmey);
+		Orion.Wait(250)
+		gump = Orion.GetGump('lastgump');
+		if ((gump !== null) && (!gump.Replayed())) {
+			gump.Select(Orion.CreateGumpHook(6));
+			while (!Orion.WaitForGump(100)) {
+				Orion.Wait(100)
+			}
+			gump = Orion.GetGump('lastgump');
+			gump.Select(Orion.CreateGumpHook(10101));
+		}
+		while (!Orion.WaitForGump(100)) {
+			Orion.Wait(100)
+		}
+		gump = Orion.GetGump('lastgump');
+		gump.Close()
+		Orion.Wait(100)
+		pot_poison = Orion.Count('0x0F0E', '0x0044', 'backpack')
+		while (pot_poison != 0) {
+			p = Orion.FindType('0x0F0E', '0x0044', 'backpack')
+			Orion.MoveItem(p, 'any', bau)
+			Orion.Wait(300)
+			pot_poison = Orion.Count('0x0F0E', '0x0044', 'backpack')
+		}
+		igotBag = Orion.Count(igot, 'any', 'backpack')
+		while (igotBag != 0) {
+			p = Orion.FindType(igot, 'any', 'backpack')
+			Orion.MoveItem(p, 'any', bau)
+			Orion.Wait(300)
+				igotBag = Orion.Count(igot, 'any', 'backpack')
+		}
+		tinkering = Orion.SkillValue('Tinkering', 'real')
+		alchmey = Orion.SkillValue('Alchemy', 'real')
+	}
+}
