@@ -1,3 +1,19 @@
+// ===========================================================================
+//						FAVOR MANTER OS CREDITOS
+// Nome do Script:  	Bs e Poisoning
+// Criado por:         	Rafael Unnamed
+// ================================================== 
+// Versão:				1.0 Version
+// Atualizada:			04/02/2024
+// Teste:           	1 Players 
+// Aprovado:          	100% 
+// Testado no:        	Ancorp Shard
+// ================================================== 
+// Recomendo 1 bau seguro no banco ou travado em uma small 
+// com pot laser poison e iron igots para fazer dagger
+// ===========================================================================
+
+
 var bau = '0x40310D53'
 var igot = { id: '0x1BF2', cor: '0x0000' }
 var dagger = '0x0F51'
