@@ -153,9 +153,11 @@ function derreterDagger() {
 }
 
 function BsPoisoning() {
+	
 	bs = Orion.SkillValue('Blacksmithy', 'real')
 	poisoning = Orion.SkillValue('Poisoning', 'real')
 	while (bs < 1000 || poisoning < 1000) {
+		Orion.UseObject(bau)
 		craftarDagger()
 		Orion.Wait(250)
 		poisonDagger()
