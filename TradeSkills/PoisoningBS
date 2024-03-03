@@ -1,0 +1,168 @@
+var bau = '0x40310D53'
+var igot = { id: '0x1BF2', cor: '0x0000' }
+var dagger = '0x0F51'
+var ferramenta_bs = '0x4016D8B0'
+var pot = { id: '0x0F0E', cor: '0x0044' }
+
+function terminate() {
+	s = Orion.GetScripts()
+	for (i = 0; i != s.length; i++) {
+		if (s[i] != 'terminate') {
+			Orion.Terminate(s[i])
+		}
+	}
+}
+
+function teste() {
+	if (Player.Poisoned()) {
+		Orion.ClearJournal()
+		while (!Orion.WaitJournal('O veneno em seu corpo', Orion.Now(), Orion.Now() + 3000)) {
+			Orion.Cast('Cure', 'self')
+			Orion.ClearJournal()
+		}
+	}
+	while (Player.Hits() != Player.MaxHits()) {
+		Orion.ClearJournal()
+		while (!Orion.WaitJournal('nao precisa ser curado.', Orion.Now(), Orion.Now() + 1500)) {
+			Orion.BandageSelf()
+			Orion.ClearJournal()
+		}
+	}
+	while (Player.Mana() != Player.MaxMana()) {
+		Orion.ClearJournal()
+		while (!Orion.WaitJournal('completa.', Orion.Now(), Orion.Now() + 1000)) {
+			Orion.UseSkill('Meditation')
+			Orion.ClearJournal()
+		}
+	}
+}
+
+function checkPoison() {
+	if (Player.Poisoned()) {
+		Orion.ClearJournal()
+		while (!Orion.WaitJournal('O veneno em seu corpo', Orion.Now(), Orion.Now() + 3000)) {
+			Orion.Cast('Cure', 'self')
+			Orion.ClearJournal()
+		}
+	}
+	while (Player.Hits() != Player.MaxHits()) {
+		Orion.ClearJournal()
+		while (!Orion.WaitJournal('nao precisa ser curado.', Orion.Now(), Orion.Now() + 1500)) {
+			Orion.BandageSelf()
+			Orion.ClearJournal()
+		}
+	}
+	while (Player.Mana() != Player.MaxMana()) {
+		Orion.ClearJournal()
+		while (!Orion.WaitJournal('completa.', Orion.Now(), Orion.Now() + 1000)) {
+			Orion.UseSkill('Meditation')
+			Orion.ClearJournal()
+		}
+	}
+}
+
+function craftarDagger() {
+	// Craft Dagger
+	pi = Orion.Count(igot.id, igot.cor, 'backpack')
+	dd = Orion.Count(dagger, 'any', 'backpack')
+	while (dd == 0) {
+		Orion.Print('Craft Dagger...')
+		//Pega igot para fazer dagger
+		while (pi < 3) {
+			r = Orion.FindType(igot.id, igot.cor, bau)
+			Orion.MoveItem(r, 3, 'backpack')
+			Orion.Wait(300)
+			pi = Orion.Count(igot.id, igot.cor, 'backpack')
+		}
+		//Fazer Dagger
+		Orion.Wait(250)
+		Orion.UseObject(ferramenta_bs);
+		Orion.Wait(250)
+		gump = Orion.GetGump('lastgump');
+		if ((gump !== null) && (!gump.Replayed())) {
+			gump.Select(Orion.CreateGumpHook(6));
+			while (!Orion.WaitForGump(100)) {
+				Orion.Wait(100)
+			}
+			gump = Orion.GetGump('lastgump');
+			gump.Select(Orion.CreateGumpHook(10101));
+		}
+		while (!Orion.WaitForGump(100)) {
+			Orion.Wait(100)
+		}
+		gump = Orion.GetGump('lastgump');
+		gump.Close()
+		Orion.Wait(200)
+		pi = Orion.Count(igot.id, igot.cor, 'backpack')
+		dd = Orion.Count(dagger, 'any', 'backpack')
+	}
+}
+
+function poisonDagger() {
+	acertou = false
+	while (!acertou) {
+		Orion.Print('Envenenado Dagger...')
+		//Pegar Pot Poison
+		pp = Orion.Count(pot.id, pot.cor, 'backpack')
+		while (pp == 0) {
+			r = Orion.FindType(pot.id, pot.cor, bau)
+			Orion.MoveItem(r, 1, backpack)
+			Orion.Wait(300)
+			pp = Orion.Count(pot.id, pot.cor, 'backpack')
+		}
+		Orion.Wait(250)
+		dd = Orion.FindType(dagger, 'any', 'backpack')
+		pot_bp = Orion.FindType(pot.id, pot.cor, 'backpack')
+		Orion.ClearJournal()
+		Orion.UseSkill('Poisoning')
+		while (Orion.WaitJournal('Voce deve esperar', Orion.Now(), Orion.Now() + 100)) {
+			Orion.ClearJournal()
+			Orion.Wait(500)
+			Orion.Print('Esperando...')
+			Orion.UseSkill('Poisoning')
+		}
+		Orion.WaitForTarget(2000)
+		Orion.TargetObject(pot_bp)
+		Orion.WaitForTarget(2000)
+		Orion.TargetObject(dd)
+		Orion.Wait(3000)
+		acertou = Orion.InJournal('Voce aplicou o veneno|Isto ja esta envenenado') ? true : false
+		//Check Poison
+		checkPoison()
+	}
+}
+
+function derreterDagger() {
+	dd = Orion.FindType(dagger, 'any', 'backpack')
+	Orion.UseObject(ferramenta_bs);
+	Orion.Wait(250)
+	gump = Orion.GetGump('lastgump');
+	if ((gump !== null) && (!gump.Replayed())) {
+		gump.Select(Orion.CreateGumpHook(5004));
+	}
+	Orion.WaitForTarget(1000)
+	Orion.TargetObject(dd)
+	Orion.Wait(100)
+	igotBag = Orion.Count(igot.id, igot.cor, 'backpack')
+	while (igotBag != 0) {
+		p = Orion.FindType(igot.id, igot.cor, 'backpack')
+		Orion.MoveItem(p, 'any', bau)
+		Orion.Wait(300)
+		igotBag = Orion.Count(igot.id, igot.cor, 'backpack')
+	}
+}
+
+function BsPoisoning() {
+	bs = Orion.SkillValue('Blacksmithy', 'real')
+	poisoning = Orion.SkillValue('Poisoning', 'real')
+	while (bs < 1000 || poisoning < 1000) {
+		craftarDagger()
+		Orion.Wait(250)
+		poisonDagger()
+		Orion.Wait(250)
+		derreterDagger()
+		Orion.Wait(250)
+		bs = Orion.SkillValue('Blacksmithy', 'real')
+		poisoning = Orion.SkillValue('Poisoning', 'real')
+	}
+}
