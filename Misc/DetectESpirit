@@ -1,0 +1,29 @@
+function Detect_Spirit() {
+	dh = Orion.SkillValue('Detecting Hidden', 'real')
+	ss = Orion.SkillValue('32', 'real')
+	while (dh < 1000 || ss < 1000) {
+		if (dh < 1000) {	
+			Orion.ClearJournal()
+			while (!Orion.WaitJournal('Voce', Orion.Now(), Orion.Now() + 100)) {
+				Orion.Wait(100)
+				Orion.UseSkill('Detecting Hidden');
+			}
+		}
+		if (ss < 1000) {
+			Orion.ClearJournal()
+			while (!Orion.WaitJournal('Voce', Orion.Now(), Orion.Now() + 100)) {
+			Orion.Wait(100)
+			Orion.UseSkill('32');
+			}
+		}
+		if (Player.Mana() != Player.MaxMana()) {
+			Orion.ClearJournal()
+			while (!Orion.WaitJournal('A meditacao esta completa|Voce ja esta', Orion.Now(), Orion.Now() + 100)) {
+				Orion.Wait(100)
+				Orion.UseSkill('46');
+			}
+		}
+		dh = Orion.SkillValue('Detecting Hidden', 'real')
+		ss = Orion.SkillValue('32', 'real')
+	}
+}
