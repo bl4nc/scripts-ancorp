@@ -23,7 +23,7 @@ function TinkerAlchemy() {
 	tinkering = Orion.SkillValue('Tinkering', 'real')
 	alchmey = Orion.SkillValue('Alchemy', 'real')
 	Orion.UseObject(bau)
-	while (tinkering < 1000 || alchmey < 100) {
+	while (tinkering < 1000 || alchmey < 1000) {
 		// Pegar Igot
 		pi = Orion.Count(igot, 'any', 'backpack')
 		pv = Orion.Count('0x0F0E', '0x0000', 'backpack')
