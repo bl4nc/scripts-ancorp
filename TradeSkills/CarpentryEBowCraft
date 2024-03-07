@@ -1,0 +1,107 @@
+// Put your code here...
+var vendor = '0x0007BB12'
+var ferramenta_bc = '0x40347E8C'
+var ferramenta_carp = '0x401CB652'
+var log = '0x1BDD'
+var bau = '0x40310D53'
+
+
+function terminate() {
+	s = Orion.GetScripts()
+	for (i = 0; i != s.length; i++) {
+		if (s[i] != 'terminate') {
+			Orion.Terminate(s[i])
+		}
+	}
+}
+
+function fazerKinding(){
+	// Craft kindling
+	kinding = Orion.Count('0x0DE1', 'any', 'backpack')
+	while (kinding == 0) {
+		Orion.Print('Craft kindling...')
+		Orion.UseObject(ferramenta_bc);
+		Orion.Wait(250)
+		gump = Orion.GetGump('lastgump');
+		if ((gump !== null) && (!gump.Replayed())) {
+			gump.Select(Orion.CreateGumpHook(3));
+			while (!Orion.WaitForGump(100)) {
+				Orion.Wait(100)
+			}
+			gump = Orion.GetGump('lastgump');
+			gump.Select(Orion.CreateGumpHook(10101));
+		}
+		while (!Orion.WaitForGump(100)) {
+			Orion.Wait(100)
+		}
+		gump = Orion.GetGump('lastgump');
+		gump.Close()
+		Orion.Wait(200)
+		kinding = Orion.Count('0x0DE1', 'any', 'backpack')
+	}
+}
+
+function fazerBoard(){
+	// Craft board
+	board = Orion.Count('0x1BD7', 'any', 'backpack')
+	while (board == 0) {
+		Orion.Print('Craft board...')
+		Orion.UseObject(ferramenta_carp);
+		Orion.Wait(250)
+		gump = Orion.GetGump('lastgump');
+		if ((gump !== null) && (!gump.Replayed())) {
+			gump.Select(Orion.CreateGumpHook(1));
+			while (!Orion.WaitForGump(100)) {
+				Orion.Wait(100)
+			}
+			gump = Orion.GetGump('lastgump');
+			gump.Select(Orion.CreateGumpHook(10101));
+		}
+		while (!Orion.WaitForGump(100)) {
+			Orion.Wait(100)
+		}
+		gump = Orion.GetGump('lastgump');
+		gump.Close()
+		Orion.Wait(200)
+		board = Orion.Count('0x0DE1', 'any', 'backpack')
+	}
+}
+
+function guardar(){
+	board = Orion.Count('0x1BD7', 'any', 'backpack')
+	kinding = Orion.Count('0x0DE1', 'any', 'backpack')
+	while (board > 0) {
+	Orion.Print('Guardando Board...')
+	l = Orion.FindType('0x1BD7','any','backpack')
+	Orion.MoveItem(l,'any',bau)
+	Orion.Wait(300)
+	board = Orion.Count('0x1BD7', 'any', 'backpack')
+	}
+	while (kinding > 0){
+	Orion.Print('Guardando Kindling...')
+	r = Orion.FindType('0x0DE1','any','backpack')
+	Orion.MoveItem(r,'any',bau)
+	Orion.Wait(300)
+	kinding = Orion.Count('0x0DE1', 'any', 'backpack')
+	}
+}
+
+function start (){
+Orion.UseObject(bau)
+while (Orion.SkillValue('Bowcraft/Fletching', 'real') < 1000 || Orion.SkillValue('Carpentry', 'real') < 1000) {
+logs = Orion.Count(log, 'any', 'backpack')
+while (logs < 5){
+l = Orion.FindType(log,'any',bau)
+Orion.MoveItem(l,500,'backpack')
+Orion.Wait(300)
+logs = Orion.Count(log, 'any', 'backpack')
+}
+if (Orion.SkillValue('Bowcraft/Fletching','real' < 1000)){
+fazerKinding()
+}
+if (Orion.SkillValue('Carpentry','real' < 1000)){
+fazerBoard()
+}
+guardar()
+} 
+}
