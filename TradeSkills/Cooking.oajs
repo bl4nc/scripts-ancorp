@@ -1,0 +1,63 @@
+var bau = '0x40310D50'
+var ferramenta = '0x401F60AA'
+
+function terminate() {
+	s = Orion.GetScripts()
+	for (i = 0; i != s.length; i++) {
+		if (s[i] != 'terminate') {
+			Orion.Terminate(s[i])
+		}
+	}
+}
+
+function pegarPeixe() {
+	p = Orion.Count('0x097A', 'any', 'backpack')
+	while (p == 0) {
+		Orion.Print('Pegando Fish')
+		r = Orion.FindType('0x097A', 'any', bau)
+		Orion.MoveItem(r, 100, 'backpack')
+		Orion.Wait(300)
+		p = Orion.Count('0x097A', 'any', 'backpack')
+	}
+}
+
+function guardarPeixe() {
+	p = Orion.Count('0x097B', 'any', 'backpack')
+	while (p != 0) {
+		Orion.Print('Guardando Fish')
+		r = Orion.FindType('0x097B', 'any', 'backpack')
+		Orion.MoveItem(r, 'any', bau)
+		Orion.Wait(300)
+		p = Orion.Count('0x097B', 'any', 'backpack')
+	}
+}
+
+function fazerPeixe() {
+	Orion.Print('Craft peixe...')
+	Orion.UseObject(ferramenta);
+	Orion.Wait(250)
+	gump = Orion.GetGump('lastgump');
+	if ((gump !== null) && (!gump.Replayed())) {
+		gump.Select(Orion.CreateGumpHook(3));
+		while (!Orion.WaitForGump(100)) {
+			Orion.Wait(100)
+		}
+		gump = Orion.GetGump('lastgump');
+		gump.Select(Orion.CreateGumpHook(10103));
+	}
+	while (!Orion.WaitForGump(100)) {
+		Orion.Wait(100)
+	}
+	gump = Orion.GetGump('lastgump');
+	gump.Close()
+	Orion.Wait(200)
+}
+
+function start() {
+	while (Orion.SkillValue('Cooking', 'real') < 1000) {
+		pegarPeixe()
+		fazerPeixe()
+		guardarPeixe()
+	}
+}
+

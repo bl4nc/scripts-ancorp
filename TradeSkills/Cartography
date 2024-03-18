@@ -1,0 +1,81 @@
+// Put your code here...
+var vendor = '0x0007BB12'
+var ferramenta = '0x402B17BE'
+var map = '0x14EB'
+
+
+function terminate() {
+	s = Orion.GetScripts()
+	for (i = 0; i != s.length; i++) {
+		if (s[i] != 'terminate') {
+			Orion.Terminate(s[i])
+		}
+	}
+}
+
+function comprarMap() {
+	map_qnt = Orion.Count(map, 'any', 'backpack')
+	while (map_qnt == 0) {
+		pos_vendor = Orion.FindObject(vendor)
+		if (Orion.GetDistance(pos_vendor.Serial()) > 1) {
+			Orion.OptionAlwaysRun(true);
+			Orion.WalkTo(pos_vendor.X(), pos_vendor.Y(), pos_vendor.Z(), 1);
+		}
+		Orion.UseObject(vendor)
+		Orion.Wait(300)
+		Orion.Say('Vendor Buy Guards')
+		Orion.Wait(300)
+		map_qnt = Orion.Count(map, 'any', 'backpack')
+	}
+
+}
+
+
+function fazerMap() {
+	// Craft map
+	Orion.Print('Craft map...')
+	Orion.UseObject(ferramenta);
+	Orion.Wait(250)
+	gump = Orion.GetGump('lastgump');
+	if ((gump !== null) && (!gump.Replayed())) {
+		gump.Select(Orion.CreateGumpHook(1));
+		while (!Orion.WaitForGump(100)) {
+			Orion.Wait(100)
+		}
+		gump = Orion.GetGump('lastgump');
+		gump.Select(Orion.CreateGumpHook(10101));
+	}
+	while (!Orion.WaitForGump(100)) {
+		Orion.Wait(100)
+	}
+	gump = Orion.GetGump('lastgump');
+	gump.Close()
+	Orion.Wait(200)
+}
+
+function vender() {
+	map_qnt = Orion.Count(map, 'any', 'backpack')
+	while (map_qnt != 0) {
+		pos_vendor = Orion.FindObject(vendor)
+		if (Orion.GetDistance(pos_vendor.Serial()) > 1) {
+			Orion.OptionAlwaysRun(true);
+			Orion.WalkTo(pos_vendor.X(), pos_vendor.Y(), pos_vendor.Z(), 1);
+		}
+		Orion.UseObject(vendor)
+		Orion.Wait(300)
+		Orion.Say('Vendor Sell Guards')
+		Orion.Wait(300)
+		map_qnt = Orion.Count(map, 'any', 'backpack')
+	}
+}
+
+function start() {
+
+	while (Orion.SkillValue('Cartography', 'real') < 1000) {
+		comprarMap()
+		Orion.Wait(250)
+		fazerMap()
+		Orion.Wait(250)
+		vender()
+	}
+}

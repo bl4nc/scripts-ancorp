@@ -1,0 +1,138 @@
+var pos_bank = { x: "2494", y: "554" }
+var pos_forge = { x: '2468', y: '558' }
+var bau = '0x400E806E'
+var ferramenta_bs = '0x40298F83'
+var vendor = '0x002F7CAF'
+function terminate() {
+	s = Orion.GetScripts()
+	for (i = 0; i != s.length; i++) {
+		if (s[i] != 'terminate') {
+			Orion.Terminate(s[i])
+		}
+	}
+}
+
+function pegarIgot() {
+	q_igot = Orion.Count('0x1BF2', 'any', 'backpack')
+	while (q_igot < 3) {
+		Orion.WalkTo(pos_bank.x, pos_bank.y, Player.Z())
+		Orion.Wait(100)
+		Orion.Say('Banker Bank Guards')
+		Orion.ClearJournal()
+		Orion.WaitJournal('Voce tem', Orion.Now(), Orion.Now() + 2000)
+		Orion.UseObject(bau)
+		while (q_igot < 3) {
+			i = Orion.FindType('0x1BF2', 'any', bau)
+			Orion.MoveItem(i, 500, 'backpack')
+			Orion.Wait(500)
+			q_igot = Orion.Count('0x1BF2', 'any', 'backpack')
+		}
+	}
+}
+
+function andarParaForge() {
+	Orion.WalkTo(pos_forge.x, pos_forge.y, Player.Z(), 0)
+}
+
+function teste() {
+	if (Player.Poisoned()) {
+		Orion.ClearJournal()
+		while (!Orion.WaitJournal('O veneno em seu corpo', Orion.Now(), Orion.Now() + 3000)) {
+			Orion.Cast('Cure', 'self')
+			Orion.ClearJournal()
+		}
+	}
+	while (Player.Hits() != Player.MaxHits()) {
+		Orion.ClearJournal()
+		while (!Orion.WaitJournal('nao precisa ser curado.', Orion.Now(), Orion.Now() + 1500)) {
+			Orion.BandageSelf()
+			Orion.ClearJournal()
+		}
+	}
+	while (Player.Mana() != Player.MaxMana()) {
+		Orion.ClearJournal()
+		while (!Orion.WaitJournal('completa.', Orion.Now(), Orion.Now() + 1000)) {
+			Orion.UseSkill('Meditation')
+			Orion.ClearJournal()
+		}
+	}
+}
+
+function craftarDagger() {
+	Orion.UseObject(ferramenta_bs);
+	Orion.Wait(250)
+	gump = Orion.GetGump('lastgump');
+	if ((gump !== null) && (!gump.Replayed())) {
+		gump.Select(Orion.CreateGumpHook(6));
+		while (!Orion.WaitForGump(100)) {
+			Orion.Wait(100)
+		}
+		gump = Orion.GetGump('lastgump');
+		gump.Select(Orion.CreateGumpHook(10101));
+	}
+	while (!Orion.WaitForGump(100)) {
+		Orion.Wait(100)
+	}
+	gump = Orion.GetGump('lastgump');
+	gump.Close()
+	Orion.Wait(200)
+}
+
+function venderDagger(qnt) {
+	q_dagger = Orion.Count('0x0F51', 'any', 'backpack')
+	while (q_dagger >= qnt) {
+		pos_vendor = Orion.FindObject(vendor)
+		if (Orion.GetDistance(pos_vendor.Serial()) > 1) {
+			Orion.OptionAlwaysRun(true);
+			Orion.WalkTo(pos_vendor.X(), pos_vendor.Y(), pos_vendor.Z(), 1);
+		}
+		while (q_dagger != 0) {
+			Orion.UseObject(vendor)
+			Orion.Wait(300)
+			Orion.Say('Vendor Sell Guards')
+			Orion.Wait(300)
+			q_dagger = Orion.Count('0x0F51', 'any', 'backpack')
+		}
+	}
+}
+
+function guardarGold() {
+	gold_bp = Orion.Count('0x0EED', 'any', 'backpack')
+	while (gold_bp != 0) {
+		Orion.WalkTo(pos_bank.x, pos_bank.y, Player.Z())
+		Orion.ClearJournal()
+		Orion.Wait(100)
+		Orion.Say('Banker Bank Guards')
+		Orion.WaitJournal('Voce tem', Orion.Now(), Orion.Now() + 2000)
+		Orion.UseObject(bau)
+		while (gold_bp != 0) {
+			i = Orion.FindType('0x0EED', 'any', 'backpack')
+			Orion.MoveItem(i, 'any', bau)
+			Orion.Wait(500)
+			gold_bp = Orion.Count('0x0EED', 'any', 'backpack')
+		}
+	}
+}
+
+
+function Craftar() {
+	while (true) {
+		q_igot = Orion.Count('0x1BF2', 'any', 'backpack')
+		if (q_igot < 3) {
+			Orion.Print(q_igot)
+			pegarIgot()
+			Orion.Wait(300)
+		}
+		if (Player.X() != pos_forge.x) {
+			andarParaForge()
+		}
+		Orion.Say('Guards pega o safado')
+		craftarDagger()
+		venderDagger(50)
+		gold_bp = Orion.Count('0x0EED', 'any', 'backpack')
+		if (gold_bp !== 0) {
+			guardarGold()
+		}
+		Orion.Wait(250)
+	}
+}

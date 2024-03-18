@@ -1,0 +1,79 @@
+// Put your code here...
+var vendor = '0x002F7F04'
+var ferramenta = '0x4021628D'
+
+function terminate() {
+	s = Orion.GetScripts()
+	for (i = 0; i != s.length; i++) {
+		if (s[i] != 'terminate') {
+			Orion.Terminate(s[i])
+		}
+	}
+}
+
+function comprarPano() {
+	pano = Orion.Count('0x175D', 'any', 'backpack')
+	while (pano == 0) {
+		pos_vendor = Orion.FindObject(vendor)
+		if (Orion.GetDistance(pos_vendor.Serial()) > 1) {
+			Orion.OptionAlwaysRun(true);
+			Orion.WalkTo(pos_vendor.X(), pos_vendor.Y(), pos_vendor.Z(), 1);
+		}
+		Orion.UseObject(vendor)
+		Orion.Wait(300)
+		Orion.Say('Hiroshi Buy Guards')
+		Orion.Wait(300)
+		pano = Orion.Count('0x175D', 'any', 'backpack')
+	}
+
+}
+
+
+function fazerSkullCap() {
+	// Craft skullcap
+	Orion.Print('Craft skullcap...')
+	Orion.UseObject(ferramenta);
+	Orion.Wait(250)
+	gump = Orion.GetGump('lastgump');
+	if ((gump !== null) && (!gump.Replayed())) {
+		gump.Select(Orion.CreateGumpHook(1));
+		while (!Orion.WaitForGump(100)) {
+			Orion.Wait(100)
+		}
+		gump = Orion.GetGump('lastgump');
+		gump.Select(Orion.CreateGumpHook(10101));
+	}
+	while (!Orion.WaitForGump(100)) {
+		Orion.Wait(100)
+	}
+	gump = Orion.GetGump('lastgump');
+	gump.Close()
+	Orion.Wait(200)
+}
+
+function vender() {
+	sk = Orion.Count('0x1543', 'any', 'backpack')
+	while (sk != 0) {
+		pos_vendor = Orion.FindObject(vendor)
+		if (Orion.GetDistance(pos_vendor.Serial()) > 1) {
+			Orion.OptionAlwaysRun(true);
+			Orion.WalkTo(pos_vendor.X(), pos_vendor.Y(), pos_vendor.Z(), 1);
+		}
+		Orion.UseObject(vendor)
+		Orion.Wait(300)
+		Orion.Say('Hiroshi Sell Guards')
+		Orion.Wait(300)
+	sk = Orion.Count('0x1543', 'any', 'backpack')
+	}
+}
+
+function start() {
+
+	while (Orion.SkillValue('Tailoring', 'real') < 1000) {
+		comprarPano()
+		Orion.Wait(250)
+		fazerSkullCap()
+		Orion.Wait(250)
+		vender()
+	}
+}

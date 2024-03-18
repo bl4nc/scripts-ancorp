@@ -1,0 +1,37 @@
+function terminate(){
+s = Orion.GetScripts()
+for (i = 0; i != s.length;i++){
+if (s[i] != 'terminate'){
+Orion.Terminate(s[i])
+}
+}
+}
+
+function start(){
+while(true){
+	if (Player.Hits() == Player.MaxHits()){
+	Orion.UseType('0x108A','0x0047') //Ring Dex
+	Orion.Wait(300)
+	Orion.UseType('0x108A','0x09B7') //Ring Force
+	Orion.Wait(300)
+	}
+	bs = Orion.Count('0x0E20', 'any', 'backpack')
+    while (bs > 25) {
+        b = Orion.FindType('0x0E20', 'any', 'backpack')
+        Orion.UseObject(b)
+        Orion.WaitForTarget(1000)
+        Orion.TargetObject('0x402EEDC0')
+        bs = Orion.Count('0x0E20', 'any', 'backpack')
+    }
+	
+	while (Player.Hits() != Player.MaxHits()) {
+		Orion.ClearJournal()
+		Orion.BandageSelf()
+		while (!Orion.WaitJournal('nao precisa ser curado.', Orion.Now(), Orion.Now() + 5000)) {
+			Orion.ClearJournal()
+			Orion.BandageSelf()
+		}
+	}
+	
+	}
+}

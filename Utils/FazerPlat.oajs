@@ -1,0 +1,147 @@
+var qntPlats = 10
+var comEscudo = true
+var bau = '0x40310D4F'
+var igot_cor = '0x09B5'
+var bauBags = '0x40310D50'
+var bauPlatFeita = '0x40310D54'
+var ferramenta = '0x4017A736'
+var id_partes = [
+	['0x1415', '10101', 'Peito'], //Peito 
+	['0x1411', '10102', 'Perna'], // Perna
+	['0x1414', '10103', 'Luva'], // Luva
+	['0x1413', '10104', 'Gorget'], // Gorget
+	['0x1410', '10105', 'Arms'], // Arms
+	['0x1412', '10106', 'Capacete'], // Capacete
+	['0x1B76', '10103', 'Escudo']  // Escudo
+]
+
+
+function start() {
+	feitos = 0
+	Orion.UseObject(bau)
+	Orion.UseObject(bauBags)
+	Orion.UseObject(bauPlatFeita)
+	while (feitos != qntPlats) {
+		feitos++
+		Orion.Print('Pegando Igot')
+		pegarIgot()
+		Orion.Print('Fazendo Plat')
+		fazerPlat()
+		Orion.Print('Guardando Plat')
+		guardarPlat()
+		Orion.Print('Guardar Igots que sobraram')
+		guardarIgotsSobrando()
+	}
+}
+
+function terminate() {
+	s = Orion.GetScripts()
+	for (i = 0; i != s.length; i++) {
+		if (s[i] != 'terminate') {
+			Orion.Terminate(s[i])
+		}
+	}
+}
+
+function pegarIgot() {
+	//Pegar Igots
+	igot_qnt = Orion.Count('0x1BF2', igot_cor, 'backpack')
+	while (igot_qnt < 500) {
+		l = Orion.FindType('0x1BF2', igot_cor, bau)
+		Orion.MoveItem(l, 500, 'backpack')
+		Orion.Wait(300)
+		igot_qnt = Orion.Count('0x1BF2', igot_cor, 'backpack')
+	}
+}
+
+function fazerItem(posG1, posG2) {
+	// Craft plat
+	Orion.Print('Craft item...')
+	Orion.UseObject(ferramenta);
+	Orion.Wait(250)
+	gump = Orion.GetGump('lastgump');
+	if ((gump !== null) && (!gump.Replayed())) {
+		gump.Select(Orion.CreateGumpHook(posG1));
+		while (!Orion.WaitForGump(100)) {
+			Orion.Wait(100)
+		}
+		gump = Orion.GetGump('lastgump');
+		gump.Select(Orion.CreateGumpHook(posG2));
+	}
+	while (!Orion.WaitForGump(100)) {
+		Orion.Wait(100)
+	}
+	gump = Orion.GetGump('lastgump');
+	gump.Close()
+	Orion.Wait(200)
+}
+
+function fazerPlat() {
+	for (i = 0; i != id_partes.length; i++) {
+		qp = Orion.Count(id_partes[i][0], 'any', 'backpack')
+		if (i == id_partes.length - 1 && comEscudo) {
+			while (qp == 0) {
+				fazerItem(5, id_partes[i][1])
+				qp = Orion.Count(id_partes[i][0], 'any', 'backpack')
+			}
+		} else {
+			while (qp == 0) {
+				fazerItem(1, id_partes[i][1])
+				qp = Orion.Count(id_partes[i][0], 'any', 'backpack')
+			}
+		}
+	}
+}
+
+function guardarIgotsSobrando() {
+	igot_qnt = Orion.Count('0x1BF2', igot_cor, 'backpack')
+	while (igot_qnt != 0) {
+		l = Orion.FindType('0x1BF2', igot_cor, 'backpack')
+		Orion.MoveItem(l, 'any', bau)
+		Orion.Wait(300)
+		igot_qnt = Orion.Count('0x1BF2', igot_cor, 'backpack')
+	}
+}
+
+function guardarPlat() {
+	//Pega Bag
+	qbp = Orion.Count('0x09B0', 'any', 'backpack')
+	while (qbp == 0) {
+		l = Orion.FindType('0x09B0', 'any', bauBags)
+		Orion.MoveItem(l, 'any', 'backpack')
+		Orion.Wait(300)
+		qbp = Orion.Count('0x09B0', 'any', 'backpack')
+	}
+	bagGuardar = Orion.FindType('0x09B0', 'any', 'backpack')
+	//Guarda bag
+	qp = Orion.Count('0x09B0', 'any', 'backpack')
+	while (qp != 0) {
+		Orion.MoveItem(bagGuardar, 'any', bauPlatFeita)
+		Orion.Wait(300)
+		qp = Orion.Count('0x09B0', 'any', 'backpack')
+		Orion.Print('guardando bag')
+	}
+	Orion.UseObject(bagGuardar)
+	//Guarda plat na bag
+	for (i = 0; i != id_partes.length; i++) {
+		qp = Orion.Count(id_partes[i][0], 'any', 'backpack')
+		if ((i + 1) == id_partes.length && comEscudo) {
+			while (qp != 0) {
+				l = Orion.FindType(id_partes[i][0], 'any', 'backpack')
+				Orion.MoveItem(l, 'any', bagGuardar)
+				Orion.Wait(300)
+				qp = Orion.Count(id_partes[i][0], 'any', 'backpack')
+			}
+		} else {
+			while (qp != 0) {
+				l = Orion.FindType(id_partes[i][0], 'any', 'backpack')
+				Orion.MoveItem(l, 'any', bagGuardar)
+				Orion.Wait(300)
+				qp = Orion.Count(id_partes[i][0], 'any', 'backpack')
+				Orion.Print(qp)
+			}
+		}
+	}
+
+}
+

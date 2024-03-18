@@ -1,0 +1,197 @@
+function main() {
+	maxWidth = 115;
+	maxHeight = 220;
+	textBoxHeight = 20;
+	borderWidth = 5;
+	windowX = 5;
+	windowY = 5;
+
+	//Higher numbers at the top.
+	numOps = [];
+	for (var i = 50; i >= 0; i--) {
+		numOps.push(i);
+	}
+
+	serialIndex = 0;
+
+	checkBoxIndices = [];
+	checkBoxes = [true];
+	checkBoxParamIndex = 0;
+	checkBoxGlobals = ['on'];
+
+	comboBoxIndices = [];
+	listsUsed = [numOps];
+	comboBoxes = [40];
+	comboBoxParamIndex = 0;
+	comboBoxGlobals = ['val'];
+
+	textIndices = [];
+	texts = ['I like to eat pie.'];
+	textParamIndex = 0;
+	textGlobals = ['text'];
+
+	customGump = Orion.CreateCustomGump(serialIndex++);
+	customGump.Clear();
+	customGump.SetCallback('writeValues');
+	currentX = 0;
+	currentY = 0;
+
+	customGump.SetX(windowX);
+	customGump.SetY(windowY);
+	customGump.Update();
+
+	//Background.
+	gumpSetup();
+
+	//Check Boxes
+	setCheckBoxDemoGump(checkBoxes[checkBoxParamIndex++]);
+
+	//Combo Boxes
+	setComboBoxDemoGump(comboBoxes[comboBoxParamIndex++]);
+
+	//text
+	setTextDemoGump(texts[textParamIndex++]);
+
+	//Button
+	setButtonDemoGump();
+
+	Shared.AddVar('serial', serialIndex);
+
+	Shared.AddArray('checkBoxIndices', checkBoxIndices);
+	Shared.AddArray('checkBoxes', checkBoxes);
+	Shared.AddArray('checkBoxGlobals', checkBoxGlobals);
+
+	Shared.AddArray('comboBoxIndices', comboBoxIndices);
+	Shared.AddArray('listsUsed', listsUsed);
+	Shared.AddArray('comboBoxes', comboBoxes);
+	Shared.AddArray('comboBoxGlobals', comboBoxGlobals);
+
+	Shared.AddArray('textIndices', textIndices);
+	Shared.AddArray('texts', texts);
+	Shared.AddArray('textGlobals', textGlobals);
+
+	customGump.Update();
+}
+
+//Callback function.
+function writeValues() {
+	if (isInArray([0, Shared.GetVar('updateButtonSerial')], CustomGumpResponse.Serial())[0]) {
+		TextWindow.Clear();
+
+		for (var i = 0; i < Shared.GetArray('checkBoxIndices').length; i++) {
+			write(Shared.GetArray('checkBoxGlobals')[i] + ': ' + CustomGumpResponse.CheckBox(Shared.GetArray('checkBoxIndices')[i]));
+		}
+
+		for (var i = 0; i < Shared.GetArray('comboBoxIndices').length; i++) {
+			write(Shared.GetArray('comboBoxGlobals')[i] + ': ' + Shared.GetArray('listsUsed')[i][CustomGumpResponse.ComboBox(Shared.GetArray('comboBoxIndices')[i])]);
+		}
+
+		for (var i = 0; i < Shared.GetArray('textIndices').length; i++) {
+			write(Shared.GetArray('textGlobals')[i] + ': ' + CustomGumpResponse.Text(Shared.GetArray('textIndices')[i]));
+		}
+	}
+}
+
+//Setup (Don't need to be in functions.
+function gumpSetup() {
+	customGump.SetNoMove(false);
+	customGump.SetNoClose(false);
+	boxBorder(customGump, currentX, currentY, maxWidth, maxHeight, '#FFFFE0', borderWidth);
+	//Top.
+	boxBorder(customGump, currentX, currentY, maxWidth, textBoxHeight, '#FFFF00', borderWidth);
+	currentX += borderWidth;
+	//Top Text.
+	customGump.AddText(maxWidth * 1 / 16, 0, '0', "Paro's Demo GUI");
+
+	currentY += textBoxHeight;
+}
+
+function setCheckBoxDemoGump(on) {
+	textBox("Check Box Demo", 'static');
+	currentY += textBoxHeight;
+
+	checkBox('Check Box', on);
+
+	currentY += textBoxHeight * 1.5;
+	customGump.Update();
+}
+
+function setComboBoxDemoGump(nums) {
+	textBox("Combo Box Demo", 'static');
+	currentY += textBoxHeight;
+
+	comboBox(numOps, nums, 40);
+
+	currentY += textBoxHeight * 1.5;
+	customGump.Update();
+}
+
+function setTextDemoGump(text) {
+	textBox("Text Demo", 'static');
+	currentY += textBoxHeight;
+
+	textBox(text, 'entry');
+
+	currentY += textBoxHeight * 1.5;
+	customGump.Update();
+}
+
+function setButtonDemoGump() {
+	textBox("Button Demo", 'static');
+	currentY += textBoxHeight;
+
+	Shared.AddVar('updateButtonSerial', serialIndex);
+	customGump.AddButton(serialIndex++, currentX, currentY, '0x00F9', '0x00F7', '0x00F8', '0');
+}
+
+//Helper functions.
+function textBox(text, mode) {
+	if (mode == 'static') {
+		customGump.AddText(currentX, currentY, 'black', text);
+	}
+	else if (mode == 'entry') {
+		textIndices.push(serialIndex);
+
+		customGump.AddTextEntry(serialIndex++, currentX, currentY, 'black', text, 110, textBoxHeight, 18);
+	}
+}
+
+function checkBox(text, state) {
+	checkBoxIndices.push(serialIndex);
+
+	customGump.AddCheckbox(serialIndex++, currentX, currentY, '0x00D2', '0x00D2', '0x00D3', Number(state), 'black', text);
+}
+
+function comboBox(items, value, width) {
+	comboBoxIndices.push(serialIndex);
+
+	customGump.AddComboBox(serialIndex++, currentX, currentY, '0x90', 0, '0x90', width, 0);
+
+	for (var i = 0; i < items.length; i++) {
+		customGump.AddComboBoxText(items[i], '38', value == items[i]);
+	}
+}
+
+function boxBorder(customGump, x, y, width, height, color, borderWidth) {
+	customGump.AddColoredPolygone(x, y, width, height, color);
+	customGump.AddColoredPolygone(x, y, width, height, '#FFEFD5', 1, borderWidth, 1);
+}
+
+function write(message) {
+	TextWindow.Open();
+	TextWindow.Print(message);
+}
+
+function isInArray(array, item) {
+	found = false;
+
+	var i = 0;
+	while (!found && i < array.length) {
+		if (array[i] == item)
+			found = true;
+		else
+			i++;
+	}
+
+	return [found, i];
+}

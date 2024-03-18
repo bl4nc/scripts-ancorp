@@ -1,0 +1,25 @@
+function SKILL_AnimalTaming(){
+	TextWindow.Clear();
+	TextWindow.Open();
+	TextWindow.Print('1 - Se fecha com o animal em um local onde você não o perde de vista.');
+	TextWindow.Print('2 - Seleciona ele como target, o script pega o ultima alvo.');
+	while(Orion.SkillValue('Animal Taming', 'real')<1000 || Orion.SkillValue('Peacemaking', 'real')<1000){
+		if (Orion.SkillValue('Animal Taming', 'real')<1000){
+		Orion.Say('All Release');
+		Orion.ClearJournal();
+		while(!Orion.InJournal('O animal aceitou')){
+			Orion.WaitTargetObject('lasttarget');
+			Orion.UseSkill('Animal Taming');
+			Orion.WaitJournal('O animal aceitou|Voce nao', Orion.Now(), Orion.Now()+30000);
+		}
+		}
+		if (Orion.SkillValue('Peacemaking', 'real')<1000){
+		Orion.ClearJournal();
+		while(!Orion.InJournal('Voce')){
+			Orion.WaitTargetObject('lasttarget');
+			Orion.UseSkill('Peacemaking');
+			Orion.WaitJournal('Voce', Orion.Now(), Orion.Now()+13000);
+		}
+		}
+	}
+}

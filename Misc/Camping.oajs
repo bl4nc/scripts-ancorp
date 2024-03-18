@@ -1,0 +1,72 @@
+// Put your code here...
+var bau = '0x40310D53'
+var kindling = '0x0DE1'
+var count = 0
+
+init_pos = [Player.X() ,Player.Y(),Player.Z()]
+
+
+function terminate() {
+	s = Orion.GetScripts()
+	for (i = 0; i != s.length; i++) {
+		if (s[i] != 'terminate') {
+			Orion.Terminate(s[i])
+		}
+	}
+}
+
+
+function pegarKindling(){
+k = Orion.Count(kindling,'any','backpack')
+while (k == 0){
+pk = Orion.FindType(kindling,'any',bau)
+Orion.MoveItem(pk,1,'backpack')
+Orion.Wait(400)
+k = Orion.Count(kindling,'any','backpack')
+}
+}
+
+function dropar(){
+k = Orion.FindType(kindling,'any','backpack')
+Orion.Drop(k,1,Player.X(),Player.Y(),Player.Z())
+Orion.Wait(100)
+Orion.ClearJournal()
+while (!Orion.WaitJournal("You can't|Nao ha|Voce nao", Orion.Now(), Orion.Now() + 50)) {
+Orion.UseObject(k)
+}
+}
+
+function andar(c){
+Orion.Print('Fogueira '+c)
+if (c == 10){
+Orion.WalkTo(init_pos[0] - 8,init_pos[1],init_pos[2])
+count = 0
+init_pos = [Player.X() ,Player.Y(),Player.Z()]
+return
+}
+if (Orion.CanWalk('any',Player.X() ,Player.Y()+ 4,Player.Z())){
+Orion.WalkTo(Player.X() ,Player.Y()+ 4,Player.Z())
+return
+}
+if (Orion.CanWalk('any',Player.X()+4 ,Player.Y()- 4,Player.Z())){
+Orion.WalkTo(Player.X()+4 ,Player.Y()- 4,Player.Z())
+return
+}
+
+if (Orion.CanWalk('any',Player.X()+100 ,Player.Y()- 100,Player.Z())){
+Orion.WalkTo(Player.X()+100 ,Player.Y()- 100,Player.Z())
+return
+}
+
+Orion.Wait(300)
+}
+
+
+function start() {
+	while (Orion.SkillValue('Camping', 'real') < 1000) {
+		count++
+		pegarKindling()
+		andar(count)
+		dropar()
+	}
+}

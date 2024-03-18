@@ -1,0 +1,42 @@
+function terminate(){
+s = Orion.GetScripts()
+for (i = 0; i != s.length;i++){
+if (s[i] != 'terminate'){
+Orion.Terminate(s[i])
+}
+}
+}
+
+function start(){
+while (Orion.SkillValue('Magery', 'real') < 1000 || Orion.SkillValue('Meditation', 'real') < 1000) {
+if (Player.Hits() > Player.MaxHits()-10)
+Orion.Cast('Magic Arrow','self')
+Orion.Wait(2000)
+	if ((Player.Mana() != Player.MaxMana() && Orion.SkillValue('Meditation', 'real') < 1000)
+	|| (Player.Mana() < 5  && Orion.SkillValue('Meditation', 'real') == 1000)) {
+			Orion.ClearJournal()
+			while (!Orion.WaitJournal('A meditacao esta completa|Voce ja esta', Orion.Now(), Orion.Now() + 100)) {
+				Orion.Wait(100)
+				Orion.UseSkill('46');
+			}
+		}
+}
+}
+
+function bands(){
+while (!Player.Dead()){
+if (Player.Hits() != Player.MaxHits()){
+	Orion.BandageSelf()
+	Orion.ClearJournal()
+    Orion.WaitJournal('curou|escorregaram|envenenado|nao precisa', Orion.Now(), Orion.Now() + 5600);
+}
+	bs = Orion.Count('0x0E20', 'any', 'backpack')
+    while (bs > 150) {
+        b = Orion.FindType('0x0E20', 'any', 'backpack')
+        Orion.UseObject(b)
+        Orion.WaitForTarget(1000)
+        Orion.TargetObject('0x402EEDC0')
+        bs = Orion.Count('0x0E20', 'any', 'backpack')
+    }
+	} 
+}
