@@ -1,0 +1,60 @@
+
+function CraftScrollFS() {
+	var bau = '0x40310D50'
+	var scroll = '0x0E34'
+	var reg = ['0x0F8C','0x0F8D']
+	var scroll_feito = '0x1F5F'
+	var ferramenta = '0x40387144'
+	Orion.UseObject(bau)
+	while (true) {
+		// Pegar Regs e Scroll
+		cr1 = Orion.Count(reg[0], 'any', 'backpack')
+		cr2 = Orion.Count(reg[1], 'any', 'backpack')
+		cs = Orion.Count(scroll, 'any', 'backpack')
+		while (cr1 == 0 || cr2 == 0 || cs == 0) {
+			if (cr1 == 0) {
+				r = Orion.FindType(reg[0], 'any', bau)
+				Orion.MoveItem(r, 1, backpack)
+				Orion.Wait(300)
+			}
+			if (cr2 == 0) {
+				r = Orion.FindType(reg[1], 'any', bau)
+				Orion.MoveItem(r, 1, backpack)
+				Orion.Wait(300)
+			}
+			if (cs == 0) {
+				s = Orion.FindType(scroll, 'any', bau)
+				Orion.MoveItem(s, 1, backpack)
+				Orion.Wait(300)
+			}
+			cr1 = Orion.Count(reg[0], 'any', 'backpack')
+			cr2 = Orion.Count(reg[1], 'any', 'backpack')
+			cs = Orion.Count(scroll, 'any', 'backpack')
+		}
+		Orion.Wait(250)
+		Orion.UseObject(ferramenta);
+		Orion.Wait(250)
+		gump = Orion.GetGump('lastgump');
+		if ((gump !== null)  && (!gump.Replayed())) {
+			gump.Select(Orion.CreateGumpHook(7));
+			while(!Orion.WaitForGump(100)){
+			Orion.Wait(100)
+			}
+			gump = Orion.GetGump('lastgump');
+			gump.Select(Orion.CreateGumpHook(10103));
+		}
+		while(!Orion.WaitForGump(100)){
+			Orion.Wait(100)
+			}
+		gump = Orion.GetGump('lastgump');
+		gump.Close()
+		Orion.Wait(100)
+		sbp = Orion.Count(scroll_feito, 'any', 'backpack')
+		while (sbp != 0) {
+			sc = Orion.FindType(scroll_feito, 'any', 'backpack')
+			Orion.MoveItem(sc, 'any', bau)
+			Orion.Wait(300)
+			sbp = Orion.Count(scroll_feito, 'any', 'backpack')
+		}
+	}
+}

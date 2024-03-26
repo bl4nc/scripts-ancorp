@@ -1,0 +1,69 @@
+
+// ===========================================================================
+//						FAVOR MANTER OS CREDITOS
+// Nome do Script:  	Inscription com Poison Scroll
+// Criado por:         	Rafael Unnamed
+// ================================================== 
+// Versão:				1.0 Version
+// Atualizada:			03/02/2024
+// Teste:           	1 Players 
+// Aprovado:          	100% 
+// Testado no:        	Ancorp Shard
+// ================================================== 
+// Recomendo 1 bau seguro no banco ou travado em uma small 
+// com nightside e blank scroll para a criação dos scrolls poison
+// ===========================================================================
+
+function CraftScrollPoison() {
+	var bau = '0x40310D50'
+	var scroll = '0x0E34'
+	var reg = '0x0F88'
+	var scroll_feito = '0x1F40'
+	var ferramenta = '0x40387144'
+	is = Orion.SkillValue('Inscription', 'real')
+	Orion.UseObject(bau)
+	while (is < 1000) {
+		// Pegar Regs e Scroll
+		cr = Orion.Count(reg, 'any', 'backpack')
+		cs = Orion.Count(scroll, 'any', 'backpack')
+		while (cr == 0 || cs == 0) {
+			if (cr == 0) {
+				r = Orion.FindType(reg, 'any', bau)
+				Orion.MoveItem(r, 1, backpack)
+				Orion.Wait(300)
+			}
+			if (cs == 0) {
+				s = Orion.FindType(scroll, 'any', bau)
+				Orion.MoveItem(s, 1, backpack)
+				Orion.Wait(300)
+			}
+			cr = Orion.Count(reg, 'any', 'backpack')
+			cs = Orion.Count(scroll, 'any', 'backpack')
+		}
+		Orion.Wait(250)
+		Orion.UseObject(ferramenta);
+		Orion.Wait(250)
+		gump = Orion.GetGump('lastgump');
+		if ((gump !== null) && (!gump.Replayed())) {
+			gump.Select(Orion.CreateGumpHook(3));
+			while (!Orion.WaitForGump(100)) {
+				Orion.Wait(100)
+			}
+			gump = Orion.GetGump('lastgump');
+			gump.Select(Orion.CreateGumpHook(10104));
+		}
+		while (!Orion.WaitForGump(100)) {
+			Orion.Wait(100)
+		}
+		gump = Orion.GetGump('lastgump');
+		gump.Close()
+		Orion.Wait(100)
+		sbp = Orion.Count(scroll_feito, 'any', 'backpack')
+		while (sbp != 0) {
+			sc = Orion.FindType(scroll_feito, 'any', 'backpack')
+			Orion.MoveItem(sc, 'any', bau)
+			Orion.Wait(300)
+			sbp = Orion.Count(scroll_feito, 'any', 'backpack')
+		}
+	}
+}

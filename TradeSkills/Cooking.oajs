@@ -1,5 +1,5 @@
 var bau = '0x40310D50'
-var ferramenta = '0x401F60AA'
+var ferramenta = '0x401F60A9'
 
 function terminate() {
 	s = Orion.GetScripts()

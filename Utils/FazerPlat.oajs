@@ -3,6 +3,7 @@ var comEscudo = true
 var bau = '0x40310D4F'
 var igot_cor = '0x09B5'
 var bauBags = '0x40310D50'
+var dye_tub = '0x402E3764'
 var bauPlatFeita = '0x40310D54'
 var ferramenta = '0x4017A736'
 var id_partes = [

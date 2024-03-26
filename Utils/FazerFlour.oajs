@@ -1,16 +1,15 @@
 var pos_casa = { x: '1052', y: '3163',z: '7'}
 var pos_porta = { x: '1051', y: '3166',z: '7'}
-var pos
 var runa_casa = 3
-var runa_vendor = 8
+var runa_vendor = 9
 var bau = '0x40310D50'
 var bau_gold = '0x40310D4B'
-var ferramenta = '0x4007C5B4'
-var vendor = '0x002F7A6C'
-var nomeVendor = 'Kalil'
+var ferramenta = '0x4009F49A'
+var vendor = '0x002F944F'
+var nomeVendor = 'Delsin'
 var placa_casa = '0x40305978'
 var uid_book = '04007f03a'
-var weight = 150
+var qnt_fazer = 50
 
 function terminate() {
 	s = Orion.GetScripts()
@@ -43,17 +42,22 @@ function recall_book(n_runa) {
 	}
 }
 
-function fazerDagger() {
+function fazerItem() {
 	Orion.UseObject(ferramenta);
 	Orion.Wait(250)
 	gump = Orion.GetGump('lastgump');
 	if ((gump !== null) && (!gump.Replayed())) {
-		gump.Select(Orion.CreateGumpHook(6));
+		gump.Select(Orion.CreateGumpHook(2));
 		while (!Orion.WaitForGump(100)) {
 			Orion.Wait(100)
 		}
 		gump = Orion.GetGump('lastgump');
-		gump.Select(Orion.CreateGumpHook(10101));
+		gump.Select(Orion.CreateGumpHook(5002));
+		while (!Orion.WaitForGump(100)) {
+			Orion.Wait(100)
+		}
+		gump = Orion.GetGump('lastgump');
+		gump.Select(Orion.CreateGumpHook(10120));
 	}
 	while (!Orion.WaitForGump(100)) {
 		Orion.Wait(100)
@@ -63,9 +67,9 @@ function fazerDagger() {
 	Orion.Wait(200)
 }
 
-function venderDagger() {
-	q_dagger = Orion.Count('0x0F51','any','backpack')
-	while (q_dagger != 0) {
+function venderItem() {
+	q_item = Orion.Count('0x103E','any','backpack')
+	while (q_item != 0) {
 		pos_vendor = Orion.FindObject(vendor)
 		if (Orion.GetDistance(pos_vendor.Serial()) > 1) {
 			Orion.OptionAlwaysRun(true);
@@ -75,7 +79,7 @@ function venderDagger() {
 			Orion.Wait(300)
 			Orion.Say(nomeVendor +' Vendor Sell')
 			Orion.Wait(300)
-			q_dagger = Orion.Count('0x0F51','any','backpack')
+			q_item = Orion.Count('0x103E','any','backpack')
 	}
 }
 
@@ -113,7 +117,7 @@ function closedoor() {
 
 function pegarItens(){
 iron_count = Orion.Count('0x1BF2','0x0000','backpack')
-while(iron_count < 3){
+while(iron_count <= 3){
 	l = Orion.FindType('0x1BF2','0x0000',bau)
 	Orion.MoveItem(l,150,'backpack')
 	Orion.Wait(400)
@@ -134,10 +138,10 @@ function start(){
 		guardarGold()
 		Orion.Wait(500)
 		counter = 0
-		while (Player.Weight() < weight){
+		while (counter != qnt_fazer){
 			pegarItens()
 			Orion.Wait(100)
-			fazerDagger()
+			fazerItem()
 			counter++
 		}
 		Orion.Wait(100)
@@ -145,6 +149,6 @@ function start(){
 		Orion.Wait(100)
 		recall_book(runa_vendor)
 		Orion.Wait(500)
-		venderDagger()
+		venderItem()
 	}
 }
